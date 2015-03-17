@@ -1,0 +1,22 @@
+{
+    "name": "vdbelt/inmobile-sms-api",
+    "description": "PHP wrapper for interaction with the Inmobile SMS API",
+    "require": {
+        "guzzlehttp/guzzle": "~5.0@dev"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "4.5.*"
+    },
+    "authors": [
+        {
+            "name": "Martin van de Belt",
+            "email": "martin@vandebelt.dk"
+        }
+    ],
+    "autoload": {
+        "psr-0": {
+            "Vdbelt\\InmobileSmsApi": "src/"
+        }
+    },
+    "minimum-stability": "dev"
+}
