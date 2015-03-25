@@ -1,38 +1,75 @@
-<?php 
-namespace Vdbelt\InmobileSmsApi;
+<?php namespace Vdbelt\InmobileSmsApi;
 
+/**
+ * Class Message represents an object holding the message data
+ * @package Vdbelt\InmobileSmsApi
+ */
 class Message
 {
 
-	protected $content 		= '';
-	protected $sendername 	= '';
-	protected $recipients 	= array();
+    /**
+     * The content of the message
+     * @var string
+     */
+    protected $content 		= '';
 
-	public function __construct($content, array $recipients, $sendername)
+    /**
+     * The sender name of the message
+     * @var string
+     */
+    protected $sendername 	= '';
+
+    /**
+     * An array with msisdns containing the recipients
+     * @var array
+     */
+    protected $recipients 	= array();
+
+    /**
+     * @param $content
+     * @param array $recipients
+     * @param $sendername
+     */
+    public function __construct($content, array $recipients, $sendername)
 	{
 		$this->setContent($content);
 		$this->setRecipients($recipients);
 		$this->setSenderName($sendername);
-
-		return $this;
 	}
 
-	public function getRecipients()
+    /**
+     * Get array with msisdns of recipients
+     * @return array
+     */
+    public function getRecipients()
 	{
 		return $this->recipients;
 	}
 
-	public function getSenderName()
+    /**
+     * Get string containing the sendername
+     * @return string
+     */
+    public function getSenderName()
 	{
 		return $this->sendername;
 	}
 
-	public function getContent()
+    /**
+     * Get string containing the content
+     * @return string
+     */
+    public function getContent()
 	{
 		return $this->content;
 	}
 
-	public function setRecipients(array $recipients)
+    /**
+     * Set array with msisdns of the recipients
+     * @param array $recipients
+     * @return $this
+     */
+    public function setRecipients(array $recipients)
 	{
 		foreach($recipients as $recipient)
 			$this->addRecipient($recipient);
@@ -40,14 +77,25 @@ class Message
 		return $this;
 	}
 
-	public function addRecipient($recipient)
+    /**
+     * Add a recipient to the array with msisdn
+     * @param $recipient
+     * @return $this
+     */
+    public function addRecipient($recipient)
 	{
 		$this->recipients[]	= $recipient;
 
 		return $this;
 	}
 
-	public function setSenderName($sendername)
+    /**
+     * Set the sendername and throw an exception if invalid
+     * @param $sendername
+     * @return $this
+     * @throws \Exception
+     */
+    public function setSenderName($sendername)
 	{
 		if(strlen($sendername) > 16 OR strlen($sendername) < 4)
 			throw new \Exception('Invalid sendername');
@@ -57,7 +105,12 @@ class Message
 		return $this;
 	}
 
-	public function setContent($content)
+    /**
+     * Set the content of the message
+     * @param $content
+     * @return $this
+     */
+    public function setContent($content)
 	{
 		$this->content 		= $content;
 

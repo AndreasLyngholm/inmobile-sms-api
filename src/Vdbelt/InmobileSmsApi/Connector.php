@@ -1,16 +1,37 @@
-<?php 
-namespace Vdbelt\InmobileSmsApi;
+<?php namespace Vdbelt\InmobileSmsApi;
 
 use GuzzleHttp\Client;
 
+/**
+ * Class Connector is responsible for connecting to the remote API
+ * @package Vdbelt\InmobileSmsApi
+ */
 class Connector
 {
 
-	protected $endpoint 	= 'https://mm.inmobile.dk';
-	protected $api_key		= '';
-	protected $messages 	= array();
+    /**
+     * The endpoint we wish to connect to
+     * @var string
+     */
+    protected $endpoint     = 'https://mm.inmobile.dk';
 
-	public function __construct($api_key, $endpoint = null)
+    /**
+     * The API key we are using
+     * @var string
+     */
+    protected $api_key      = '';
+
+    /**
+     * The messages we are going to send
+     * @var array
+     */
+    protected $messages     = array();
+
+    /**
+     * @param $api_key
+     * @param null $endpoint
+     */
+    public function __construct($api_key, $endpoint = null)
 	{
 		$this->api_key 		= $api_key;
 
@@ -18,48 +39,76 @@ class Connector
 			$this->setEndpoint($endpoint);
 	}
 
-	public function getEndpoint($endpoint)
+    /**
+     * Get the current endpoint
+     * @param $endpoint
+     * @return string
+     */
+    public function getEndpoint()
 	{
 		return $this->endpoint;
 	}
 
-	public function getApiKey()
+    /**
+     * Get the current API key
+     * @return string
+     */
+    public function getApiKey()
 	{
 		return $this->api_key;
 	}
 
-	public function getMessages()
+    /**
+     * Get an array with the current message objects
+     * @return array
+     */
+    public function getMessages()
 	{
 		return $this->messages;
 	}
 
-	public function setEndpoint($endpoint)
+    /**
+     * Set the endpoint
+     * @param $endpoint
+     * @return $this
+     */
+    public function setEndpoint($endpoint)
 	{
 		$this->endpoint 	= $endpoint;
 
 		return $this;
 	}
 
-	public function setApiKey($api_key)
+    /**
+     * Set the API key
+     * @param $api_key
+     * @return $this
+     */
+    public function setApiKey($api_key)
 	{
 		$this->api_key		= $api_key;
 
 		return $this;
 	}
 
-	public function addMessage(Message $Message)
+    /**
+     * Add a message to the payload
+     * @param Message $Message
+     * @return $this
+     */
+    public function addMessage(Message $Message)
 	{
 		$this->messages[]	= $Message;
 
 		return $this;
 	}
 
-	public function getHttpClient()
-	{
-		return new Client;
-	}
-
-	public function send()
+    /**
+     * Send the actual payload to the endpoint
+     * @return bool
+     * @throws \Exception
+     */
+    public function send()
 	{
 		if(count($this->messages) < 1)
 			throw new \Exception('No messages to send');
@@ -75,16 +124,41 @@ class Connector
 		return true;
 	}
 
+    /**
+     * Get the http client using
+     * @return Client
+     */
+    protected function getHttpClient()
+    {
+        return new Client;
+    }
+
 }
 
 
+/**
+ * Class XML_Payload_Builder builds the actual XML payload as expected by endpoint
+ * @package Vdbelt\InmobileSmsApi
+ */
 class XML_Payload_Builder
 {
 
-	private $dom 			= null;
-	private $connector 		= null;
+    /**
+     * The DomDocument object to use
+     * @var \DomDocument|null
+     */
+    private $dom 			= null;
 
-	public function __construct(Connector $Connector)
+    /**
+     * The Connector
+     * @var null|Connector
+     */
+    private $connector 		= null;
+
+    /**
+     * @param Connector $Connector
+     */
+    public function __construct(Connector $Connector)
 	{
 		$this->connector 	= $Connector;
 		$this->dom 			= new \DomDocument('1.0', 'UTF-8');
@@ -97,12 +171,20 @@ class XML_Payload_Builder
 		$this->dom->appendChild($request);
 	}
 
-	public function getXML()
+    /**
+     * Returns the XML payload
+     * @return mixed
+     */
+    public function getXML()
 	{
 		return $this->dom->saveXML();
 	}
 
-	private function buildAuthenticationHeader()
+    /**
+     * Builds the authentication header to add
+     * @return mixed
+     */
+    protected function buildAuthenticationHeader()
 	{
 		$authentication 	= $this->dom->createElement('authentication');
 		$authentication->setAttribute('apikey', $this->connector->getApiKey());
@@ -110,7 +192,11 @@ class XML_Payload_Builder
 		return $authentication;
 	}
 
-	private function buildMessages()
+    /**
+     * Transforms Message objects into XML
+     * @return mixed
+     */
+    protected function buildMessages()
 	{
 		$data = $this->dom->createElement('data');
 
