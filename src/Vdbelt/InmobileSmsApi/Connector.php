@@ -32,12 +32,12 @@ class Connector
      * @param null $endpoint
      */
     public function __construct($api_key, $endpoint = null)
-	{
-		$this->api_key 		= $api_key;
+    {
+        $this->api_key 		= $api_key;
 
-		if(!is_null($endpoint))
-			$this->setEndpoint($endpoint);
-	}
+        if(!is_null($endpoint))
+            $this->setEndpoint($endpoint);
+    }
 
     /**
      * Get the current endpoint
@@ -45,27 +45,27 @@ class Connector
      * @return string
      */
     public function getEndpoint()
-	{
-		return $this->endpoint;
-	}
+    {
+        return $this->endpoint;
+    }
 
     /**
      * Get the current API key
      * @return string
      */
     public function getApiKey()
-	{
-		return $this->api_key;
-	}
+    {
+        return $this->api_key;
+    }
 
     /**
      * Get an array with the current message objects
      * @return array
      */
     public function getMessages()
-	{
-		return $this->messages;
-	}
+    {
+        return $this->messages;
+    }
 
     /**
      * Set the endpoint
@@ -73,11 +73,11 @@ class Connector
      * @return $this
      */
     public function setEndpoint($endpoint)
-	{
-		$this->endpoint 	= $endpoint;
+    {
+        $this->endpoint 	= $endpoint;
 
-		return $this;
-	}
+        return $this;
+    }
 
     /**
      * Set the API key
@@ -85,11 +85,11 @@ class Connector
      * @return $this
      */
     public function setApiKey($api_key)
-	{
-		$this->api_key		= $api_key;
+    {
+        $this->api_key		= $api_key;
 
-		return $this;
-	}
+        return $this;
+    }
 
     /**
      * Add a message to the payload
@@ -97,11 +97,11 @@ class Connector
      * @return $this
      */
     public function addMessage(Message $Message)
-	{
-		$this->messages[]	= $Message;
+    {
+        $this->messages[]	= $Message;
 
-		return $this;
-	}
+        return $this;
+    }
 
     /**
      * Send the actual payload to the endpoint
@@ -109,20 +109,20 @@ class Connector
      * @throws \Exception
      */
     public function send()
-	{
-		if(count($this->messages) < 1)
-			throw new \Exception('No messages to send');
+    {
+        if(count($this->messages) < 1)
+            throw new \Exception('No messages to send');
 
-		$builder 			= new XML_Payload_Builder($this);
-		$client 			= $this->getHttpClient();
+        $builder 			= new XML_Payload_Builder($this);
+        $client 			= $this->getHttpClient();
 
-		$client->post($this->endpoint.'/Api/V2/SendMessages', [
-			'body' => [
-				'xml' => $builder->getXML()
-		]]);
+        $client->post($this->endpoint.'/Api/V2/SendMessages', [
+            'body' => [
+                'xml' => $builder->getXML()
+            ]]);
 
-		return true;
-	}
+        return true;
+    }
 
     /**
      * Get the http client using
@@ -159,70 +159,70 @@ class XML_Payload_Builder
      * @param Connector $Connector
      */
     public function __construct(Connector $Connector)
-	{
-		$this->connector 	= $Connector;
-		$this->dom 			= new \DomDocument('1.0', 'UTF-8');
+    {
+        $this->connector 	= $Connector;
+        $this->dom 			= new \DomDocument('1.0', 'UTF-8');
 
-		$request 			= $this->dom->createElement('request');
+        $request 			= $this->dom->createElement('request');
 
-		$request->appendChild($this->buildAuthenticationHeader());
-		$request->appendChild($this->buildMessages());
+        $request->appendChild($this->buildAuthenticationHeader());
+        $request->appendChild($this->buildMessages());
 
-		$this->dom->appendChild($request);
-	}
+        $this->dom->appendChild($request);
+    }
 
     /**
      * Returns the XML payload
      * @return mixed
      */
     public function getXML()
-	{
-		return $this->dom->saveXML();
-	}
+    {
+        return $this->dom->saveXML();
+    }
 
     /**
      * Builds the authentication header to add
      * @return mixed
      */
     protected function buildAuthenticationHeader()
-	{
-		$authentication 	= $this->dom->createElement('authentication');
-		$authentication->setAttribute('apikey', $this->connector->getApiKey());
-		
-		return $authentication;
-	}
+    {
+        $authentication 	= $this->dom->createElement('authentication');
+        $authentication->setAttribute('apikey', $this->connector->getApiKey());
+
+        return $authentication;
+    }
 
     /**
      * Transforms Message objects into XML
      * @return mixed
      */
     protected function buildMessages()
-	{
-		$data = $this->dom->createElement('data');
+    {
+        $data = $this->dom->createElement('data');
 
-		foreach($this->connector->getMessages() as $Message)
-		{
-			$element 		= $this->dom->createElement('message');
-			$sendername 	= $this->dom->createElement('sendername', $Message->getSenderName());
-			$text 			= $this->dom->createElement('text');
-			$recipients 	= $this->dom->createElement('recipients');
+        foreach($this->connector->getMessages() as $Message)
+        {
+            $element 		= $this->dom->createElement('message');
+            $sendername 	= $this->dom->createElement('sendername', $Message->getSenderName());
+            $text 			= $this->dom->createElement('text');
+            $recipients 	= $this->dom->createElement('recipients');
 
-			foreach($Message->getRecipients() as $Recipient)
-			{
-				$msisdn 	= $this->dom->createElement('msisdn', $Recipient);
-				$recipients->appendChild($msisdn);
-			}
+            foreach($Message->getRecipients() as $Recipient)
+            {
+                $msisdn 	= $this->dom->createElement('msisdn', $Recipient);
+                $recipients->appendChild($msisdn);
+            }
 
-			$text->appendChild($this->dom->createCDATASection($Message->getContent()));
+            $text->appendChild($this->dom->createCDATASection($Message->getContent()));
 
-			$element->appendChild($sendername);
-			$element->appendChild($text);
-			$element->appendChild($recipients);
+            $element->appendChild($sendername);
+            $element->appendChild($text);
+            $element->appendChild($recipients);
 
-			$data->appendChild($element);
-		}
+            $data->appendChild($element);
+        }
 
-		return $data;
-	}
+        return $data;
+    }
 
 }

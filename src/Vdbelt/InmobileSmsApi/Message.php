@@ -31,38 +31,38 @@ class Message
      * @param $sendername
      */
     public function __construct($content, array $recipients, $sendername)
-	{
-		$this->setContent($content);
-		$this->setRecipients($recipients);
-		$this->setSenderName($sendername);
-	}
+    {
+        $this->setContent($content);
+        $this->setRecipients($recipients);
+        $this->setSenderName($sendername);
+    }
 
     /**
      * Get array with msisdns of recipients
      * @return array
      */
     public function getRecipients()
-	{
-		return $this->recipients;
-	}
+    {
+        return $this->recipients;
+    }
 
     /**
      * Get string containing the sendername
      * @return string
      */
     public function getSenderName()
-	{
-		return $this->sendername;
-	}
+    {
+        return $this->sendername;
+    }
 
     /**
      * Get string containing the content
      * @return string
      */
     public function getContent()
-	{
-		return $this->content;
-	}
+    {
+        return $this->content;
+    }
 
     /**
      * Set array with msisdns of the recipients
@@ -70,12 +70,12 @@ class Message
      * @return $this
      */
     public function setRecipients(array $recipients)
-	{
-		foreach($recipients as $recipient)
-			$this->addRecipient($recipient);
+    {
+        foreach($recipients as $recipient)
+            $this->addRecipient($recipient);
 
-		return $this;
-	}
+        return $this;
+    }
 
     /**
      * Add a recipient to the array with msisdn
@@ -83,11 +83,11 @@ class Message
      * @return $this
      */
     public function addRecipient($recipient)
-	{
-		$this->recipients[]	= $recipient;
+    {
+        $this->recipients[]	= $recipient;
 
-		return $this;
-	}
+        return $this;
+    }
 
     /**
      * Set the sendername and throw an exception if invalid
@@ -96,14 +96,14 @@ class Message
      * @throws \Exception
      */
     public function setSenderName($sendername)
-	{
-		if(strlen($sendername) > 16 OR strlen($sendername) < 4)
-			throw new \Exception('Invalid sendername');
+    {
+        if(strlen($sendername) > 16 OR strlen($sendername) < 4)
+            throw new \Exception('Invalid sendername');
 
-		$this->sendername 	= $sendername;
+        $this->sendername 	= $sendername;
 
-		return $this;
-	}
+        return $this;
+    }
 
     /**
      * Set the content of the message
@@ -111,10 +111,10 @@ class Message
      * @return $this
      */
     public function setContent($content)
-	{
-		$this->content 		= $content;
+    {
+        $this->content 		= $content;
 
-		return $this;
-	}
+        return $this;
+    }
 
 }
