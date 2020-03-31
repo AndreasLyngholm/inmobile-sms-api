@@ -10,20 +10,34 @@ Require this package with composer:
 composer require vdbelt/inmobile-sms-api
 ```
 
-## Usage
+## Basic usage
 
 ```php
 <?php
 
-$Message = new VdBelt\InmobileSmsApi\Message(
-    'Hello world!',
-    array('4500000000'), // an array containing the destination(s)
-    '4512345678' // from, max. 16 chars or valid MSISDN
-);
+use Inmobile\Text;
+use Inmobile\Gateway;
+use Inmobile\Message;
+use Inmobile\Recipient;
 
-$Inmobile = new Vdbelt\InmobileSmsApi\Connector('<YOUR API KEY>');
-$Inmobile->addMessage($Message);
-$Inmobile->send();
+$gateway = Gateway::create('apiKey');
+
+$message = Message::create('Hello world!')->from('My App')->to('4512345678');
+
+$gateway->addMessage($message);
+$gateway->send();
+
+
+// Other capabilities:
+$text = (new Text('Hello World'))->flash()->encoding('utf-8');
+
+$recipients = [
+    (new Recipient('4512345678'))->withMessageId('my-id'),
+    '450000000'
+];
+
+Message::create($text)->to($recipients)->from('My App')->doNotRespectBlacklist()->scheduleAt(date_create('+1 hour'));
+
 ```
 
 ## Reporting Issues
