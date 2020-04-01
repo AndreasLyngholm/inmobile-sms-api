@@ -32,6 +32,10 @@ class MessagesSent
         
         $recipients = json_decode(json_encode($this->xml), true)['recipient'];
         
+        if(count($recipients) == 1) {
+            $recipients = [$recipients];
+        }
+        
         return array_map(fn($r) => [$r['@attributes']['msisdn'] => $r['@attributes']['id']], $recipients);
     }
     
