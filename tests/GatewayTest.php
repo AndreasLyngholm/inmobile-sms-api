@@ -109,7 +109,41 @@ class GatewayTest extends TestCase
         
         $response = $gateway->send();
         
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertEquals($stub, $response->getBody()->getContents());
+        $this->assertEquals(200, $response->getResponse()->getStatusCode());
+        $this->assertEquals($stub, $response->getResponse()->getBody()->getContents());
+    }
+
+    public function testGatewayCanReturnMessageIds()
+    {
+        $stub = <<<XML
+        <reply>
+            <recipient msisdn="4512345679" id="123" />
+            <recipient msisdn="4512345679" id="13cab0f4-0e4f-44cf-8f84-a9eb435f36a4" />
+        </reply>
+        XML;
+        $mockedResponse = new Response(200, [], $stub);
+
+        $mock = new MockHandler([$mockedResponse, $mockedResponse]);
+        $mockHandler = new HandlerStack($mock);
+        $client = new Client(['handler' => $mockHandler]);
+
+        $gateway = new Gateway('foo', $client);
+
+        $gateway->addMessage(
+            Message::create('foo')
+                ->from('1245')
+                ->to([
+                    (new Recipient('4512345679'))->withMessageId('123'),
+                    '4512345679'
+                ])
+        );
+
+        $response = $gateway->send();
+
+        $firstId = $response->id();
+        $ids = $response->ids();
+        
+        $this->assertEquals('123', $firstId);
+        $this->assertEquals([['4512345679' => '123'], ['4512345679' => '13cab0f4-0e4f-44cf-8f84-a9eb435f36a4']], $ids);
     }
 }

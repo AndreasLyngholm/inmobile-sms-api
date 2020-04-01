@@ -3,9 +3,9 @@
 namespace Inmobile;
 
 use GuzzleHttp\Client;
-use Inmobile\Exceptions\ResponseExceptionHandler;
-use Psr\Http\Message\ResponseInterface;
+use Inmobile\Response\MessagesSent;
 use Inmobile\Exceptions\EmptyMessagePayload;
+use Inmobile\Exceptions\ResponseExceptionHandler;
 
 class Gateway
 {
@@ -39,6 +39,19 @@ class Gateway
     {
         return $this->messages;
     }
+
+    public function send() : MessagesSent
+    {
+        if (count($this->messages) < 1) {
+            throw new EmptyMessagePayload;
+        }
+
+        $response = $this->client->post('/Api/V2/SendMessages', [ 'form_params' => [ 'xml' => $this->toXml() ] ] );
+
+        $response = $this->responseExceptionHandler->transformResponseToException($response);
+        
+        return new MessagesSent($response);
+    }
     
     public function toXml()
     {
@@ -60,16 +73,5 @@ class Gateway
         $dom->appendChild($request);
 
         return $dom->saveXML($dom->documentElement);
-    }
-
-    public function send(): ResponseInterface
-    {
-        if (count($this->messages) < 1) {
-            throw new EmptyMessagePayload;
-        }
-        
-        $response = $this->client->post('/Api/V2/SendMessages', [ 'form_params' => [ 'xml' => $this->toXml() ] ] );
-        
-        return $this->responseExceptionHandler->transformResponseToException($response);
     }
 }
