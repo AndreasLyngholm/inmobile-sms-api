@@ -7,7 +7,7 @@ The Inmobile SMS API Client Library can be used for interaction with the Inmobil
 Require this package with composer:
 
 ```
-composer require vdbelt/inmobile-sms-api
+composer require andreaslyngholm/inmobile-sms-api
 ```
 
 ## Basic usage
@@ -37,11 +37,3 @@ $recipients = [
 ];
 
 Message::create($text)->to($recipients)->from('My App')->doNotRespectBlacklist()->scheduleAt(date_create('+1 hour'));
-
-```
-
-## Reporting Issues
-Report issues using the [Github Issue Tracker](https://github.com/vdbelt/inmobile-sms-api/issues) or email [martin@vandebelt.dk](mailto:martin@vandebelt.dk).
-
-## Copyright
-Copyright Martin van de Belt. See LICENSE for details.

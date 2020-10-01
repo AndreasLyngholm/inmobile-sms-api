@@ -1,5 +1,5 @@
 {
-    "name": "vdbelt/inmobile-sms-api",
+    "name": "andreaslyngholm/inmobile-sms-api",
     "description": "PHP wrapper for interaction with the Inmobile SMS API",
     "keywords": ["inmobile", "sms", "textmessage", "php"],
     "type": "library",
@@ -34,6 +34,10 @@
         {
             "name": "Martin van de Belt",
             "email": "martin@vandebelt.dk"
+        },
+        {
+            "name": "Andreas Lyngholm Poulsen",
+            "email": "andreas@simpleconcept.dk"
         }
     ]
 }
